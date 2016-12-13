@@ -1,0 +1,46 @@
+{
+  // https://github.com/yaniswang/HTMLHint/wiki/Rules
+
+  // タグ大文字禁止
+  "tagname-lowercase": true,
+  // Attr大文字禁止
+  "attr-lowercase": true,
+  // Attr Valueに""以外禁止
+  "attr-value-double-quotes": true,
+  // Attr Valueが空禁止
+  "attr-value-not-empty": false,
+  // Attrの重複禁止
+  "attr-no-duplication": true,
+  // doctype以前の書き込み禁止
+  "doctype-first": true,
+  // タグの省略禁止
+  "tag-pair": true,
+  // 閉じタグなし禁止
+  "tag-self-close": false,
+  // 特殊文字使用禁止
+  "spec-char-escape": true,
+  // idの重複禁止
+  "id-unique": true,
+  // srcが空のタグ禁止
+  "src-not-empty": true,
+  // headの中にtitleタグと内容必須
+  "title-require": true,
+  // headにscriptタグの記述禁止
+  "head-script-disabled": false,
+  // altタグ必須
+  "img-alt-require": true,
+  // <!DOCTYPE HTML><html>の使用
+  "doctype-html5": true,
+  // idはid-class-value必須
+  "id-class-value": "false",
+  // styleタグ使用禁止
+  "style-disabled": false,
+  // スペースとタブの混合禁止
+  "space-tab-mixed-disabled": true,
+  // 
+  "id-class-ad-disabled": true,
+  // hrefのパスの指定方法
+  "href-abs-or-rel": false,
+  // 
+  "attr-unsafe-chars": true
+ }
