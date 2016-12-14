@@ -2,7 +2,6 @@ var gulp         = require('gulp');
 var htmlhint     = require("gulp-htmlhint");
 var sass         = require('gulp-ruby-sass');
 var minifyCSS    = require('gulp-minify-css');
-var coffeeScript = require('gulp-coffee');
 var typeScript   = require('gulp-typescript');
 var uglify       = require('gulp-uglify');
 var autoprefixer = require('gulp-autoprefixer');
@@ -110,23 +109,6 @@ gulp.task('sass',function(){
 });
 
 /**************************************
-  coffeeScript コンパイルタスク
-**************************************/
-gulp.task('coffee', function() {
-  for (key in coffee) {
-    val = coffee[key];
-    gulp.src(val)
-      .pipe(plumber({
-      	errorHandler: notify.onError('Error: <%= error.message %>;')
-      }))
-      .pipe(concat(key+'.coffee'))
-      .pipe(coffeeScript())
-      .pipe(uglify())
-      .pipe(gulp.dest(path.js));
-  }
-});
-
-/**************************************
   typeScript コンパイルタスク
 **************************************/
 gulp.task('type', function() {
@@ -189,5 +171,6 @@ gulp.task('watch',function(){
 /**************************************
   実行タスク
 **************************************/
-gulp.task('default', ['watch', 'browser-sync']);
+// gulp.task('default', ['watch', 'browser-sync']);
+gulp.task('default', ['watch']);
 gulp.task('y', ['watch', 'browser-sync_y']);

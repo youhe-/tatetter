@@ -1,10 +1,83 @@
+<?php
+function twistOAuth() {
+  // TwistOAuth
+  require_once 'TwistOAuth.phar';
+  define('CONSUMER_KEY', 'Qgto12R9XdR8wLDcZNCFf4qLC');
+  define('CONSUMER_SECRET', '13CfH4UEIMUa45YaApYDwicEKK0ciu1xYaYvRIL9oFITFAlgCO');
+  define('ACCESS_TOKEN', '806099216980316160-3Iky3ilXSURmPIQ6Grw6C3n5YRdrHkl');
+  define('ACCESS_TOKEN_SECRET', 'uLt0A4wUndex1hKt6PiQDgI3EmDB4XxAHKLcuY6lFXnlE');
+
+  try {
+    $to = new TwistOAuth(CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET);
+    return $to;
+  } catch(TwistException $e) {
+    $error = $e->getMessage();
+  }
+  return false;
+}
+
+function get_timeLine($auth) {
+  $cnt = 10;
+  $screen_name = 'tatetter_';
+
+  $tl = array();
+  $param = array('screen_name' => $screen_name, 'count' => $cnt);
+  if(isset($max_id)) {
+    $param['max_id'] = $max_id;
+  }
+
+  try {
+    $tmp_statuses = $auth->get('statuses/home_timeline', $param);
+  } catch (TwistException $e) {
+    $error = $e->getMessage();
+  }
+
+  if(count($tmp_statuses) == 0) {
+    break;
+  } else {
+    $tl =  array_merge($tl, $tmp_statuses);
+    $max_id = $tmp_statuses[count($tmp_statuses)-1]->id - 1;
+  }
+  return $tl;
+}
+function make_data($tl) {
+  $data = array();
+  foreach ($tl as $val) {
+    $d = array();
+    $d['thum'] = $val->user->profile_image_url;
+    $d['date'] = date('Y/m/d H:i:s', strtotime($val->created_at));
+    $d['name'] = $val->user->name;
+    $d['sc_name'] = $val->user->screen_name;
+    $d['tweet'] = $val->text;
+    // tweet内のURL
+    if (isset($val->entities->urls)) {
+      foreach ($val->entities->urls as $url_val) {
+        $link = $url_val->url;
+        $d['tweet'] = str_replace($link, '<a href="'.$link.'" target="_blank">'.$link.'</a>', $d['tweet']);
+      }
+    }
+    // footer URL
+    if (isset($val->entities->media)) {
+      foreach ($val->entities->media as $url_val) {
+        $link = $url_val->url;
+        $d['tweet'] = str_replace($link, '<a href="'.$link.'" target="_blank">'.$link.'</a>', $d['tweet']);
+      }
+    }
+    array_push($data, $d);
+  }
+  return $data;
+}
+$auth = twistOAuth();
+$tl = get_timeLine($auth);
+$data = make_data($tl);
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>__title__</title>
+  <title>tatetter</title>
   <meta name="keywords" content="">
   <meta name="description" content="">
 
@@ -17,13 +90,28 @@
   <meta property="og:site_name" content="">
   <!-- / OGP -->
 
-  <!-- favicon -->
-  <link rel="shortcut icon" href="favicon.ico">
-  <!-- / favicon -->
-
   <link href="/css/index.css" rel="stylesheet">
 </head>
 <body>
-  <script src="/js/main.js"></script>
+  <?php if(isset($error)): echo $error;?>
+  <?php else:?>
+  <ul>
+    <?php foreach ($data as $val):?>
+    <li>
+      <div class="header">
+        <i class="header__thum"><img src="<?php echo $val['thum'];?>" alt=""></i>
+        <p class="header__date"><?php echo $val['date'];?></p>
+        <p class="header__user">
+          <span class="header__user__name"><?php echo $val['name'];?></span>
+          <span class="header__user__sCname">
+            <a href="https://twitter.com/<?php echo $val['sc_name'];?>" target="_blank">@<?php echo $val['sc_name'];?></a>
+          </span>
+      </div>
+      <p class="body"><?php echo $val['tweet'];?></p>
+    </li>
+    <?php endforeach;?>
+  </ul>
+  <?php endif;?>
+  <!-- <script src="/js/main.js"></script> -->
 </body>
 </html>
